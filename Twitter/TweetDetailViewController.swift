@@ -61,6 +61,8 @@ class TweetDetailViewController: UIViewController, RetweetCellDelegate {
         }
     }
     
+    // Retweet Cell Delegate methods
+    
     func userDidRetweet(tweet: Tweet) {
         self.tweet = tweet
         tweetDetailTableView.reloadData()
@@ -69,6 +71,10 @@ class TweetDetailViewController: UIViewController, RetweetCellDelegate {
     func userDidFavorite(tweet: Tweet) {
         self.tweet = tweet
         tweetDetailTableView.reloadData()
+    }
+    
+    func userDidReply() {
+        performSegue(withIdentifier: "tweetToCompose", sender: self)
     }
 }
 

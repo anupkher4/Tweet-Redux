@@ -11,6 +11,7 @@ import UIKit
 @objc protocol RetweetCellDelegate {
     @objc optional func userDidRetweet(tweet: Tweet)
     @objc optional func userDidFavorite(tweet: Tweet)
+    @objc optional func userDidReply()
 }
 
 class RetweetTableViewCell: UITableViewCell {
@@ -48,6 +49,7 @@ class RetweetTableViewCell: UITableViewCell {
     }
 
     @IBAction func replyClicked(_ sender: UIButton) {
+        delegate?.userDidReply?()
     }
     @IBAction func retweetClicked(_ sender: UIButton) {
         let id = tweet.id

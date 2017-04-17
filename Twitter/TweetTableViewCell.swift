@@ -29,20 +29,6 @@ class TweetTableViewCell: UITableViewCell {
                 screennameLabel.text = "@\(user.screenname!)"
             }
             tweetTextLabel.text = tweet.text!
-            if let date = tweet.timestamp {
-                let now = Date()
-                let timeInterval = now.timeIntervalSince(date)
-                var calendar = Calendar.current
-                calendar.timeZone = TimeZone.current
-                let hourComponent = calendar.dateComponents([.hour], from: Date(timeIntervalSinceNow: timeInterval))
-                if let hours = hourComponent.hour {
-                    if hours > 23 {
-                        timeLabel.text = "\(24/hours)d"
-                    } else {
-                        timeLabel.text = "\(hours)h"
-                    }
-                }
-            }
             if tweet.isRetweeted {
                 retweetButton.setImage(UIImage(named: "retweet_on"), for: .normal)
                 retweetStackView.isHidden = false
@@ -50,6 +36,25 @@ class TweetTableViewCell: UITableViewCell {
             }
             if tweet.isFavorited {
                 likeButton.setImage(UIImage(named: "favorite_on"), for: .normal)
+            }
+            if let date = tweet.timestamp {
+                let now = Date()
+                let timeInterval = now.timeIntervalSince(date)
+                var calendar = Calendar.current
+                calendar.timeZone = TimeZone.current
+                let minuteComponent = calendar.dateComponents([.minute], from: Date(timeIntervalSinceNow: timeInterval))
+                let hourComponent = calendar.dateComponents([.hour], from: Date(timeIntervalSinceNow: timeInterval))
+                let dayComponent = calendar.dateComponents([.day], from: Date(timeIntervalSinceNow: timeInterval))
+                guard let minutes = minuteComponent.minute, let hours = hourComponent.hour, let days = dayComponent.day else {
+                    return
+                }
+                if minutes <= 59 {
+                    timeLabel.text = "\(minutes)m"
+                } else if hours <= 23 {
+                    timeLabel.text = "\(hours)h"
+                } else {
+                    timeLabel.text = "\(days)d"
+                }
             }
         }
     }

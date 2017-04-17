@@ -13,6 +13,8 @@ class TweetsViewController: UIViewController {
 
     var tweets: [Tweet] = []
     var firstLoad = true
+    var isMoreDataLoading = false
+    var activityIndicator: UIActivityIndicatorView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +29,20 @@ class TweetsViewController: UIViewController {
         tweetsTableView.dataSource = self
         tweetsTableView.estimatedRowHeight = 150
         tweetsTableView.rowHeight = UITableViewAutomaticDimension
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: .valueChanged)
+        tweetsTableView.insertSubview(refreshControl, at: 0)
+        
+        let footerHeight: CGFloat = 60.0
+        activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: tweetsTableView.contentSize.height, width: tweetsTableView.bounds.size.width, height: footerHeight))
+        activityIndicator?.activityIndicatorViewStyle = .gray
+        activityIndicator?.hidesWhenStopped = true
+        tweetsTableView.addSubview(activityIndicator!)
+        
+        var insets = tweetsTableView.contentInset
+        insets.bottom += footerHeight
+        tweetsTableView.contentInset = insets
         
         getTweets()
     }
@@ -48,14 +64,35 @@ class TweetsViewController: UIViewController {
         TwitterClient.sharedInstance!.logout()
     }
     
-    func getTweets() {
+    func getTweets(refreshControl: UIRefreshControl? = nil) {
         TwitterClient.sharedInstance!.getHomeTimeline(success: { [unowned self] (tweets: [Tweet]) in
             self.tweets = tweets
             self.tweetsTableView.reloadData()
             self.firstLoad = false
+            if let refresh = refreshControl {
+                refresh.endRefreshing()
+            }
+            print("No. of tweets loaded: \(self.tweets.count)")
         }) { (error: Error) in
             print("error: \(error.localizedDescription)")
         }
+    }
+    
+    func loadMoreTweets() {
+        let currentTweetCount = tweets.count
+        TwitterClient.sharedInstance!.getHomeTimeline(tweetCount: currentTweetCount + 20, success: { [unowned self] (tweets: [Tweet]) in
+            self.tweets = tweets
+            self.tweetsTableView.reloadData()
+            self.firstLoad = false
+            self.isMoreDataLoading = false
+            print("No. of tweets loaded: \(self.tweets.count)")
+        }) { (error: Error) in
+            print("error: \(error.localizedDescription)")
+        }
+    }
+    
+    func refreshControlAction(_ refreshControl: UIRefreshControl) {
+        getTweets(refreshControl: refreshControl)
     }
 
     // MARK: - Navigation
@@ -89,6 +126,25 @@ extension TweetsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+}
+
+extension TweetsViewController: UIScrollViewDelegate {
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if !isMoreDataLoading {
+            // Calculate the position of one screen length before the bottom of the results
+            let scrollViewContentHeight = tweetsTableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tweetsTableView.bounds.size.height
+            
+            // When the user has scrolled past the threshold, start requesting
+            if(scrollView.contentOffset.y > scrollOffsetThreshold && tweetsTableView.isDragging) {
+                isMoreDataLoading = true
+                
+                loadMoreTweets()
+            }
+        }
     }
     
 }
