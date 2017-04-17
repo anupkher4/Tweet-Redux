@@ -69,4 +69,63 @@ class TwitterClient: BDBOAuth1SessionManager {
             failure(error)
         })
     }
+    
+    func postStatusUpdate(statusText tweetText: String, replyToId: String? = nil, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+        let encodedText = tweetText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        var params: [String : AnyObject] = ["status" : encodedText! as AnyObject]
+        if let replyId = replyToId {
+            params["in_reply_to_status_id"] = replyId as AnyObject
+        }
+        post("1.1/statuses/update.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionary = response as! NSDictionary
+            let createdTweet = Tweet(dictionary: dictionary)
+            success(createdTweet)
+        }) { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        }
+    }
+    
+    func retweet(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+        post("1.1/statuses/retweet/\(id).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionary = response as! NSDictionary
+            let retweetedTweet = Tweet(dictionary: dictionary)
+            success(retweetedTweet)
+        }) { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        }
+    }
+    
+    func unRetweet(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+        post("1.1/statuses/unretweet/\(id).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionary = response as! NSDictionary
+            let unRetweetedTweet = Tweet(dictionary: dictionary)
+            success(unRetweetedTweet)
+        }) { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        }
+    }
+    
+    func favorite(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+        let params = ["id" : "\(id)"]
+        post("1.1/favorites/create.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionary = response as! NSDictionary
+            let favoritedTweet = Tweet(dictionary: dictionary)
+            success(favoritedTweet)
+        }) { (task: URLSessionDataTask?, error:
+            Error) in
+            failure(error)
+        }
+    }
+    
+    func unFavorite(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+        let params = ["id" : "\(id)"]
+        post("1.1/favorites/destroy.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionary = response as! NSDictionary
+            let unFavoritedTweet = Tweet(dictionary: dictionary)
+            success(unFavoritedTweet)
+        }) { (task: URLSessionDataTask?, error:
+            Error) in
+            failure(error)
+        }
+    }
 }

@@ -10,20 +10,34 @@ import UIKit
 
 class Tweet: NSObject {
     
+    var id: Int64
     var text: String?
     var timestamp: Date?
     var retweets: Int = 0
     var favorites: Int = 0
+    var isRetweeted: Bool = false
+    var isFavorited: Bool = false
+    var user: User?
     
     init(dictionary: NSDictionary) {
+        let id_str = dictionary["id_str"] as! String
+        id = Int64(id_str)!
         text = dictionary["text"] as? String
         if let createdAt = dictionary["created_at"] as? String {
             let formatter = DateFormatter()
+            formatter.locale = Locale.current
+            formatter.timeZone = TimeZone.current
             formatter.dateFormat = "EEE MMM dd HH:mm:ss Z yyyy"
-            timestamp = formatter.date(from: createdAt)
+            let createdDate = formatter.date(from: createdAt)
+            timestamp = createdDate
         }
         retweets = dictionary["retweet_count"] as? Int ?? 0
         favorites = dictionary["favourites_count"] as? Int ?? 0
+        isRetweeted = dictionary["retweeted"] as? Bool ?? false
+        isFavorited = dictionary["favorited"] as? Bool ?? false
+        if let userDict = dictionary["user"] as? NSDictionary {
+            user = User(dictionary: userDict)
+        }
     }
     
     class func getAllTweetsFrom(dictionaries: [NSDictionary]) -> [Tweet] {
