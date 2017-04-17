@@ -10,6 +10,7 @@ import UIKit
 
 class TweetDetailTableViewCell: UITableViewCell {
     @IBOutlet weak var retweetStackView: UIStackView!
+    @IBOutlet weak var retweetLabel: UILabel!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var screennameLabel: UILabel!
@@ -32,6 +33,7 @@ class TweetDetailTableViewCell: UITableViewCell {
             }
             if tweet.isRetweeted {
                 retweetStackView.isHidden = false
+                retweetLabel.text = "\(User.currentUser!.screenname!) retweeted"
             }
         }
     }

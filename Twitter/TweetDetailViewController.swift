@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TweetDetailViewController: UIViewController {
+class TweetDetailViewController: UIViewController, RetweetCellDelegate {
     @IBOutlet weak var tweetDetailTableView: UITableView!
     
     var tweet: Tweet?
@@ -60,7 +60,16 @@ class TweetDetailViewController: UIViewController {
             }
         }
     }
-
+    
+    func userDidRetweet(tweet: Tweet) {
+        self.tweet = tweet
+        tweetDetailTableView.reloadData()
+    }
+    
+    func userDidFavorite(tweet: Tweet) {
+        self.tweet = tweet
+        tweetDetailTableView.reloadData()
+    }
 }
 
 extension TweetDetailViewController: UITableViewDelegate, UITableViewDataSource {
@@ -85,7 +94,9 @@ extension TweetDetailViewController: UITableViewDelegate, UITableViewDataSource 
             return cell
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "RetweetCell", for: indexPath) as! RetweetTableViewCell
+            cell.delegate = self
             if let tweet = self.tweet {
+                print("passing in id: \(tweet.id)")
                 cell.tweet = tweet
             }
             return cell

@@ -190,6 +190,7 @@
                                             <outlet property="profileImageView" destination="zSN-H1-hPb" id="W69-zK-n53"/>
                                             <outlet property="replyButton" destination="P7n-1i-rCV" id="4PF-26-yx8"/>
                                             <outlet property="retweetButton" destination="lnt-h1-Lst" id="4Cf-3s-Pyo"/>
+                                            <outlet property="retweetLabel" destination="Sbd-MS-B3G" id="ycS-dA-gfW"/>
                                             <outlet property="retweetStackView" destination="k0b-qj-NLc" id="nyv-0I-vJs"/>
                                             <outlet property="screennameLabel" destination="Scd-SD-pVq" id="ywe-1C-dug"/>
                                             <outlet property="timeLabel" destination="G7B-VD-Fgw" id="rj3-cf-1Mx"/>
@@ -328,6 +329,7 @@
                                         <connections>
                                             <outlet property="nameLabel" destination="31R-SX-Oft" id="Ugi-Hx-Ftn"/>
                                             <outlet property="profileImageView" destination="Utx-MB-G4D" id="eHh-gp-23H"/>
+                                            <outlet property="retweetLabel" destination="cTp-VX-6OR" id="OSJ-uy-neb"/>
                                             <outlet property="retweetStackView" destination="GSe-Z9-2I3" id="Ekz-l7-3mt"/>
                                             <outlet property="screennameLabel" destination="a0y-mI-Qae" id="ypd-Uh-JHx"/>
                                             <outlet property="timestampLabel" destination="HMb-uj-8yN" id="Tk4-DI-PrX"/>

@@ -85,7 +85,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func retweet(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+    func retweet(tweetId id: Int64, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
         post("1.1/statuses/retweet/\(id).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             let dictionary = response as! NSDictionary
             let retweetedTweet = Tweet(dictionary: dictionary)
@@ -95,7 +95,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func unRetweet(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+    func unRetweet(tweetId id: Int64, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
         post("1.1/statuses/unretweet/\(id).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             let dictionary = response as! NSDictionary
             let unRetweetedTweet = Tweet(dictionary: dictionary)
@@ -105,7 +105,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func favorite(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+    func favorite(tweetId id: Int64, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
         let params = ["id" : "\(id)"]
         post("1.1/favorites/create.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             let dictionary = response as! NSDictionary
@@ -117,7 +117,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func unFavorite(tweetId id: Int, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+    func unFavorite(tweetId id: Int64, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
         let params = ["id" : "\(id)"]
         post("1.1/favorites/destroy.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             let dictionary = response as! NSDictionary

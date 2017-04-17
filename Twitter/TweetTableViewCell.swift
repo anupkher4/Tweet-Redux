@@ -11,6 +11,7 @@ import AFNetworking
 
 class TweetTableViewCell: UITableViewCell {
     @IBOutlet weak var retweetStackView: UIStackView!
+    @IBOutlet weak var retweetLabel: UILabel!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var screennameLabel: UILabel!
@@ -45,6 +46,7 @@ class TweetTableViewCell: UITableViewCell {
             if tweet.isRetweeted {
                 retweetButton.setImage(UIImage(named: "retweet_on"), for: .normal)
                 retweetStackView.isHidden = false
+                retweetLabel.text = "\(User.currentUser!.screenname!) retweeted"
             }
             if tweet.isFavorited {
                 likeButton.setImage(UIImage(named: "favorite_on"), for: .normal)

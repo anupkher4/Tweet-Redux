@@ -114,11 +114,19 @@ class ComposeTweetViewController: UIViewController {
 
 extension ComposeTweetViewController: UITextViewDelegate {
     
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    func textViewDidChange(_ textView: UITextView) {
+        let length = textView.text.characters.count
         let characterLabel = navigationItem.titleView as! UILabel
-        characterLabel.text = "\(textView.text.characters.count + 1)"
-        if textView.text.isEmpty {
-            characterLabel.text = "0"
+        characterLabel.text = "\(140 - length)"
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text.characters.count == 0 {
+            if textView.text.characters.count != 0 {
+                return true
+            }
+        } else if textView.text.characters.count > 139 {
+            return false
         }
         return true
     }
