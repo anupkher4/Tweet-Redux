@@ -17,12 +17,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let contentViewController = storyboard.instantiateViewController(withIdentifier: "ContentViewController") as! ContentViewController
+        let menuViewController = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as! MenuViewController
+        
+        menuViewController.contentViewController = contentViewController
+        contentViewController.menuViewController = menuViewController
+        
         if User.currentUser != nil {
             // Go directly to tweets
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "TweetsNavController")
+//            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//            let vc = storyboard.instantiateViewController(withIdentifier: "TweetsNavController")
             
-            window?.rootViewController = vc
+            window?.rootViewController = contentViewController
         }
         
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: User.logoutNotificationName), object: nil, queue: OperationQueue.main) { (Notification) in

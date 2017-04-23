@@ -71,6 +71,17 @@ class TwitterClient: BDBOAuth1SessionManager {
         })
     }
     
+    func getMentionsTimeline(tweetCount count: Int = 20, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        let params = ["count" : count]
+        get("1.1/statuses/mentions_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionaries = response as! [NSDictionary]
+            let tweets = Tweet.getAllTweetsFrom(dictionaries: dictionaries)
+            success(tweets)
+        }, failure: { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        })
+    }
+    
     func postStatusUpdate(statusText tweetText: String, replyToId: String? = nil, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
         let encodedText = tweetText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         var params: [String : AnyObject] = ["status" : encodedText! as AnyObject]

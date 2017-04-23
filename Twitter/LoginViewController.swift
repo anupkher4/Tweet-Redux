@@ -24,7 +24,7 @@ class LoginViewController: UIViewController {
     
     @IBAction func loginClicked(_ sender: UIButton) {
         TwitterClient.sharedInstance!.login(success: { 
-            self.performSegue(withIdentifier: "loginToTweets", sender: nil)
+            self.performSegue(withIdentifier: "loginToHome", sender: nil)
         }) { (error: Error) in
             print("error: \(error.localizedDescription)")
         }
