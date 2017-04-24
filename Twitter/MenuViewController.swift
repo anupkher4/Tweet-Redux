@@ -14,10 +14,11 @@ class MenuViewController: UIViewController {
     var profileViewController: UIViewController!
     var tweetsViewController: UIViewController!
     var mentionsViewController: UIViewController!
+    var accountsViewController: UIViewController!
     
     var viewControllers: [UIViewController] = []
     
-    var menuItems: [String] = ["Profile", "Timeline", "Mentions"]
+    var menuItems: [String] = ["Profile", "Timeline", "Mentions", "Accounts"]
     
     var contentViewController: ContentViewController!
     
@@ -28,12 +29,15 @@ class MenuViewController: UIViewController {
         profileViewController = storyboard.instantiateViewController(withIdentifier: "ProfileNavController")
         tweetsViewController = storyboard.instantiateViewController(withIdentifier: "TweetsNavController")
         mentionsViewController = storyboard.instantiateViewController(withIdentifier: "MentionsNavController")
+        accountsViewController = storyboard.instantiateViewController(withIdentifier: "AccountsViewController")
         
         menuTableView.delegate = self
         menuTableView.dataSource = self
         
+        viewControllers.append(profileViewController)
         viewControllers.append(tweetsViewController)
         viewControllers.append(mentionsViewController)
+        viewControllers.append(accountsViewController)
         
         contentViewController.contentViewController = tweetsViewController
     }

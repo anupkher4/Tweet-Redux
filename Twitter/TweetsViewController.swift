@@ -15,6 +15,7 @@ class TweetsViewController: UIViewController {
     var firstLoad = true
     var isMoreDataLoading = false
     var activityIndicator: UIActivityIndicatorView?
+    var selectedUser: User = User.currentUser!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +65,14 @@ class TweetsViewController: UIViewController {
         TwitterClient.sharedInstance!.logout()
     }
     
+    func didTapProfilePicture(_ sender: UITapGestureRecognizer) {
+        let imageView = sender.view as! UIImageView
+        let index = imageView.tag
+        let selectedTweet = tweets[index]
+        selectedUser = selectedTweet.user!
+        performSegue(withIdentifier: "tweetsToProfile", sender: sender)
+    }
+    
     func getTweets(refreshControl: UIRefreshControl? = nil) {
         TwitterClient.sharedInstance!.getHomeTimeline(success: { [unowned self] (tweets: [Tweet]) in
             self.tweets = tweets
@@ -105,6 +114,11 @@ class TweetsViewController: UIViewController {
             let selectedTweet = tweets[indexPath!.row]
             tweetDetailVc.tweet = selectedTweet
         }
+        if segue.identifier == "tweetsToProfile" {
+            let navVc = segue.destination as! UINavigationController
+            let profileVc = navVc.topViewController as! ProfileViewController
+            profileVc.user = selectedUser
+        }
     }
 
 }
@@ -120,6 +134,11 @@ extension TweetsViewController: UITableViewDelegate, UITableViewDataSource {
         
         let tweet = tweets[indexPath.row]
         cell.tweet = tweet
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapProfilePicture(_:)))
+        cell.profileImageView.tag = indexPath.row
+        cell.profileImageView.isUserInteractionEnabled = true
+        cell.profileImageView.addGestureRecognizer(tapGesture)
         
         return cell
     }

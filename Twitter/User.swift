@@ -55,6 +55,7 @@ class User: NSObject {
             
             let defaults = UserDefaults.standard
             if let user = user {
+                userAccounts[user.screenname!] = user
                 let userData = try! JSONSerialization.data(withJSONObject: user.userJson!, options: [])
                 defaults.set(userData, forKey: "current_user_data")
             } else {
@@ -63,5 +64,7 @@ class User: NSObject {
             defaults.synchronize()
         }
     }
+    
+    static var userAccounts: [String : User] = [:]
     
 }

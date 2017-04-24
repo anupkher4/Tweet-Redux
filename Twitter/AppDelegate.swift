@@ -21,9 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let contentViewController = storyboard.instantiateViewController(withIdentifier: "ContentViewController") as! ContentViewController
         let menuViewController = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as! MenuViewController
         
-        menuViewController.contentViewController = contentViewController
-        contentViewController.menuViewController = menuViewController
-        
         if User.currentUser != nil {
             // Go directly to tweets
 //            let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -32,10 +29,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.rootViewController = contentViewController
         }
         
+        menuViewController.contentViewController = contentViewController
+        contentViewController.menuViewController = menuViewController
+        
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: User.logoutNotificationName), object: nil, queue: OperationQueue.main) { (Notification) in
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyboard.instantiateInitialViewController()
             
+            // Go back to login screen if logged out
             self.window?.rootViewController = vc
         }
         

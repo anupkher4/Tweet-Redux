@@ -27,6 +27,13 @@ class MentionsViewController: UIViewController {
         mentionsTableView.estimatedRowHeight = 150
         mentionsTableView.rowHeight = UITableViewAutomaticDimension
         
+        let cellNib = UINib(nibName: "TweetNibTableViewCell", bundle: Bundle.main)
+        mentionsTableView.register(cellNib, forCellReuseIdentifier: "MentionsCell")
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), for: .valueChanged)
+        mentionsTableView.insertSubview(refreshControl, at: 0)
+        
         getMentions()
     }
     
@@ -52,10 +59,17 @@ class MentionsViewController: UIViewController {
             self.tweets = tweets
             self.mentionsTableView.reloadData()
             self.isFirstLoad = false
+            if let refresh = refreshControl {
+                refresh.endRefreshing()
+            }
             print("No. of tweets loaded: \(self.tweets.count)")
         }) { (error: Error) in
             print("error: \(error.localizedDescription)")
         }
+    }
+    
+    func refreshControlAction(_ refreshControl: UIRefreshControl) {
+        getMentions(refreshControl: refreshControl)
     }
 
     /*
@@ -77,9 +91,10 @@ extension MentionsViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MentionsCell", for: indexPath) as! TweetTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MentionsCell", for: indexPath) as! TweetNibTableViewCell
         
-        cell.tweet = tweets[indexPath.row]
+        let tweet = tweets[indexPath.row]
+        cell.tweet = tweet
         
         return cell
     }

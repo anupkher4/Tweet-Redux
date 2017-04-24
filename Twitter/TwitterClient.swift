@@ -50,7 +50,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         })
     }
     
-    func getUserAccount(success: @escaping (User) -> (), failure: @escaping (Error) -> ()) {
+    private func getUserAccount(success: @escaping (User) -> (), failure: @escaping (Error) -> ()) {
         get("1.1/account/verify_credentials.json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             let response = response as! NSDictionary
             let user = User(dictionary: response)
