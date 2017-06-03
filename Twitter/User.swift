@@ -8,7 +8,7 @@
 
 import UIKit
 
-class User: NSObject {
+class User: NSObject, NSCoding {
     static let logoutNotificationName = "userDidLogOut"
     
     var name: String?
@@ -20,6 +20,17 @@ class User: NSObject {
     var followingCount: Int?
     var followerCount: Int?
     private var userJson: NSDictionary?
+    
+    init(name: String?, screenname: String?, bio: String?, profileUrl: URL?, profileBackgroundUrl: URL?, tweetsCount: Int?, followingCount: Int?, followerCount: Int?) {
+        self.name = name
+        self.screenname = screenname
+        self.bio = bio
+        self.profileUrl = profileUrl
+        self.profileBackgroundUrl = profileBackgroundUrl
+        self.tweetsCount = tweetsCount
+        self.followingCount = followingCount
+        self.followerCount = followerCount
+    }
     
     init(dictionary: NSDictionary) {
         userJson = dictionary
@@ -66,5 +77,44 @@ class User: NSObject {
     }
     
     static var userAccounts: [String : User] = [:]
+    
+    
+    // MARK: - NSCoding
+    
+    private struct PropertyKey {
+        static let name = "UserName"
+        static let screennmae = "UserScreenName"
+        static let bio = "UserBio"
+        static let profileUrl = "UserProfileUrl"
+        static let profileBackgroundUrl = "UserProfileBackgroundUrl"
+        static let tweetsCount = "UserTweetsCount"
+        static let followingCount = "UserFollowingCount"
+        static let followerCount = "UserFolowerCount"
+    }
+    
+    required convenience init(coder aDecoder: NSCoder) {
+        let name = aDecoder.decodeObject(forKey: PropertyKey.name) as? String
+        let screenname = aDecoder.decodeObject(forKey: PropertyKey.screennmae) as? String
+        let bio = aDecoder.decodeObject(forKey: PropertyKey.bio) as? String
+        let profileUrl = aDecoder.decodeObject(forKey: PropertyKey.profileUrl) as? URL
+        let profileBackgroundUrl = aDecoder.decodeObject(forKey: PropertyKey.profileBackgroundUrl) as? URL
+        let tweetsCount = aDecoder.decodeObject(forKey: PropertyKey.tweetsCount) as? Int
+        let followingCount = aDecoder.decodeObject(forKey: PropertyKey.followingCount) as? Int
+        let followerCount = aDecoder.decodeObject(forKey: PropertyKey.followerCount) as? Int
+        
+        self.init(name: name, screenname: screenname, bio: bio, profileUrl: profileUrl, profileBackgroundUrl: profileBackgroundUrl, tweetsCount: tweetsCount, followingCount: followingCount, followerCount: followerCount)
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.name, forKey: PropertyKey.name)
+        aCoder.encode(self.screenname, forKey: PropertyKey.screennmae)
+        aCoder.encode(self.bio, forKey: PropertyKey.bio)
+        aCoder.encode(self.profileUrl, forKey: PropertyKey.profileUrl)
+        aCoder.encode(self.profileBackgroundUrl, forKey: PropertyKey.profileBackgroundUrl)
+        aCoder.encode(self.tweetsCount, forKey: PropertyKey.tweetsCount)
+        aCoder.encode(self.followingCount, forKey: PropertyKey.followingCount)
+        aCoder.encode(self.followerCount, forKey: PropertyKey.followerCount)
+    }
+
     
 }
