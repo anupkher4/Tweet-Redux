@@ -11,6 +11,8 @@ import BDBOAuth1Manager
 
 class LoginViewController: UIViewController {
 
+    let appDelegate = UIApplication.shared.delegate as! AppDelegate
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,8 +25,10 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func loginClicked(_ sender: UIButton) {
-        TwitterClient.sharedInstance!.login(success: { 
-            self.performSegue(withIdentifier: "loginToHome", sender: nil)
+        TwitterClient.sharedInstance!.login(success: { [unowned self] _ in
+//            self.performSegue(withIdentifier: "loginToHome", sender: nil)
+            let vc = self.appDelegate.superContentViewController!
+            self.present(vc, animated: true, completion: nil)
         }) { (error: Error) in
             print("error: \(error.localizedDescription)")
         }

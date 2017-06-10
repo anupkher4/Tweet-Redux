@@ -13,13 +13,14 @@ import BDBOAuth1Manager
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var superContentViewController: ContentViewController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let contentViewController = storyboard.instantiateViewController(withIdentifier: "ContentViewController") as! ContentViewController
         let menuViewController = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as! MenuViewController
+        superContentViewController = contentViewController
         
         if User.currentUser != nil {
             // Go directly to tweets
