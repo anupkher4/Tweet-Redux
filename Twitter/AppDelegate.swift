@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             window?.rootViewController = contentViewController
         }
-        
+
         menuViewController.contentViewController = contentViewController
         contentViewController.menuViewController = menuViewController
         

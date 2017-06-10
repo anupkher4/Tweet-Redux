@@ -15,7 +15,7 @@ class TweetsViewController: UIViewController {
     var firstLoad = true
     var isMoreDataLoading = false
     var activityIndicator: UIActivityIndicatorView?
-    var selectedUser: User = User.currentUser!
+    var selectedUser: User? = User.currentUser
     
     override func viewDidLoad() {
         super.viewDidLoad()

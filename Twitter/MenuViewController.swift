@@ -40,6 +40,7 @@ class MenuViewController: UIViewController {
         viewControllers.append(accountsViewController)
         
         contentViewController.contentViewController = tweetsViewController
+//        contentViewController.contentViewController = (tweetsViewController as! UINavigationController).topViewController!
     }
 
     override func didReceiveMemoryWarning() {
