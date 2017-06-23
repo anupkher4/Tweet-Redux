@@ -24,7 +24,7 @@ class MentionsViewController: UIViewController {
         
         mentionsTableView.delegate = self
         mentionsTableView.dataSource = self
-        mentionsTableView.estimatedRowHeight = 150
+        mentionsTableView.estimatedRowHeight = 150.0
         mentionsTableView.rowHeight = UITableViewAutomaticDimension
         
         let cellNib = UINib(nibName: "TweetNibTableViewCell", bundle: Bundle.main)
