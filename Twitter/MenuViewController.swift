@@ -27,7 +27,7 @@ class MenuViewController: UIViewController {
         super.viewDidLoad()
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        profileViewController = storyboard.instantiateViewController(withIdentifier: "ProfileNavController")
+        profileViewController = storyboard.instantiateViewController(withIdentifier: "ProfileNavController2")
         tweetsViewController = storyboard.instantiateViewController(withIdentifier: "TweetsNavController")
         mentionsViewController = storyboard.instantiateViewController(withIdentifier: "MentionsNavController")
 //        accountsViewController = storyboard.instantiateViewController(withIdentifier: "AccountsViewController")
