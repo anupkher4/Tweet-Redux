@@ -83,7 +83,8 @@ class TwitterClient: BDBOAuth1SessionManager {
     }
     
     func postStatusUpdate(statusText tweetText: String, replyToId: String? = nil, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
-        let encodedText = tweetText.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        let encodedText = String(tweetText.utf8)
+        print("Tweet: \(encodedText!)")
         var params: [String : AnyObject] = ["status" : encodedText! as AnyObject]
         if let replyId = replyToId {
             params["in_reply_to_status_id"] = replyId as AnyObject
