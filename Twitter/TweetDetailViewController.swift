@@ -65,12 +65,14 @@ class TweetDetailViewController: UIViewController, RetweetCellDelegate {
     
     func userDidRetweet(tweet: Tweet) {
         self.tweet = tweet
-        tweetDetailTableView.reloadData()
+        tweetDetailTableView.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+//        tweetDetailTableView.reloadData()
     }
     
     func userDidFavorite(tweet: Tweet) {
         self.tweet = tweet
-        tweetDetailTableView.reloadData()
+        tweetDetailTableView.reloadRows(at: [IndexPath(row: 2, section: 0)], with: .automatic)
+//        tweetDetailTableView.reloadData()
     }
     
     func userDidReply() {

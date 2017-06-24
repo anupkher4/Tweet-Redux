@@ -23,6 +23,7 @@ class ProfileViewController2: UIViewController {
     
     var tweets: [Tweet] = []
     var firstLoad: Bool = true
+    var selectedUser: User?
     var user: User?
 
     override func viewDidLoad() {
@@ -40,9 +41,18 @@ class ProfileViewController2: UIViewController {
         let cellNib = UINib(nibName: "TweetNibTableViewCell", bundle: Bundle.main)
         userTweetsTableView.register(cellNib, forCellReuseIdentifier: "ProfileCell2")
         
-        user = User.currentUser
+        if let passedInUser = selectedUser {
+            user = passedInUser
+            navigationController?.isNavigationBarHidden = false
+            
+            let closeButton = UIBarButtonItem(title: "Close", style: .done, target: self, action: #selector(closeClicked))
+            navigationItem.leftBarButtonItem = closeButton
+        } else {
+            user = User.currentUser
+        }
         
         profileBackgroundImageView.contentMode = .scaleAspectFill
+        profileBackgroundImageView.clipsToBounds = true
         profileBackgroundImageView.setImageWith((user?.profileBackgroundUrl)!)
         userProfileImageView.clipsToBounds = true
         userProfileImageView.layer.cornerRadius = 3.0
@@ -68,8 +78,12 @@ class ProfileViewController2: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func closeClicked() {
+        dismiss(animated: true, completion: nil)
+    }
+    
     func getTweets() {
-        TwitterClient.sharedInstance!.getHomeTimeline(success: { [unowned self] (tweets: [Tweet]) in
+        TwitterClient.sharedInstance!.getUserTimeLine(userName: user!.screenname!, count: 20, success: { (tweets: [Tweet]) in
             self.tweets = tweets
             self.userTweetsTableView.reloadData()
             self.firstLoad = false
@@ -77,6 +91,7 @@ class ProfileViewController2: UIViewController {
         }) { (error: Error) in
             print("error: \(error.localizedDescription)")
         }
+        
     }
     
 }

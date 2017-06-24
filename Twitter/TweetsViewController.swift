@@ -8,9 +8,10 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController {
+class TweetsViewController: UIViewController, TweetTableViewCellDelegate {
     @IBOutlet weak var tweetsTableView: UITableView!
-
+    
+    let client = TwitterClient.sharedInstance!
     var tweets: [Tweet] = []
     var firstLoad = true
     var isMoreDataLoading = false
@@ -103,6 +104,64 @@ class TweetsViewController: UIViewController {
     func refreshControlAction(_ refreshControl: UIRefreshControl) {
         getTweets(refreshControl: refreshControl)
     }
+    
+    // MARK: - TweetTableViewCellDelegate methods
+    
+    func userTappedReply(cell: UITableViewCell) {
+        let indexPath = tweetsTableView.indexPath(for: cell)
+        let tweet = tweets[indexPath!.row]
+        performSegue(withIdentifier: "tweetHomeToReply", sender: tweet)
+    }
+    
+    func userTappedRetweet(cell: UITableViewCell) {
+        let indexPath = tweetsTableView.indexPath(for: cell)
+        let tweet = tweets[indexPath!.row]
+        if tweet.isRetweeted {
+            // Unretweet
+            client.unRetweet(tweet: tweet, success: { (unretweet: Tweet?) in
+                if let tweet = unretweet {
+                    print("Unretweeted \(tweet.id)")
+                    self.tweetsTableView.reloadData()
+                } else {
+                    print("Tweet was never retweeted")
+                }
+            }, failure: { (error: Error) in
+                print("Unretweet error: \(error.localizedDescription)")
+            })
+        } else {
+            client.retweet(tweetId: tweet.id, success: { (retweet: Tweet) in
+                print("Retweeted \(retweet.id)")
+                self.tweetsTableView.reloadData()
+            }, failure: { (error: Error) in
+                print("Retweet error: \(error.localizedDescription)")
+            })
+        }
+//        tweetsTableView.reloadData()
+        tweet.isRetweeted = !tweet.isRetweeted
+    }
+    
+    func userTappedFavorite(cell: UITableViewCell) {
+        let indexPath = tweetsTableView.indexPath(for: cell)
+        let tweet = tweets[indexPath!.row]
+        if tweet.isFavorited {
+            // Unlike
+            client.unFavorite(tweetId: tweet.id, success: { (unliked: Tweet) in
+                print("Unliked \(unliked.id)")
+                self.tweetsTableView.reloadData()
+            }, failure: { (error: Error) in
+                print("Unlike error: \(error.localizedDescription)")
+            })
+        } else {
+            client.favorite(tweetId: tweet.id, success: { (liked: Tweet) in
+                print("Liked \(liked.id)")
+                self.tweetsTableView.reloadData()
+            }, failure: { (error: Error) in
+                print("Like error: \(error.localizedDescription)")
+            })
+        }
+//        tweetsTableView.reloadData()
+        tweet.isFavorited = !tweet.isFavorited
+    }
 
     // MARK: - Navigation
 
@@ -116,8 +175,18 @@ class TweetsViewController: UIViewController {
         }
         if segue.identifier == "tweetsToProfile" {
             let navVc = segue.destination as! UINavigationController
-            let profileVc = navVc.topViewController as! ProfileViewController
-            profileVc.user = selectedUser
+            let profileVc = navVc.topViewController as! ProfileViewController2
+            profileVc.selectedUser = selectedUser
+        }
+        if segue.identifier == "tweetHomeToReply" {
+            let tweet = sender as! Tweet
+            let navVc = segue.destination as! UINavigationController
+            let composeVc = navVc.topViewController as! ComposeTweetViewController
+            if let tweetUsername = tweet.user?.screenname {
+                composeVc.replyToTweetId = "\(tweet.id)"
+                composeVc.replyUserHandle = tweetUsername
+                composeVc.isAReply = true
+            }
         }
     }
 
@@ -131,7 +200,7 @@ extension TweetsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath) as! TweetTableViewCell
-        
+        cell.delegate = self
         let tweet = tweets[indexPath.row]
         cell.tweet = tweet
         

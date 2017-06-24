@@ -71,6 +71,20 @@ class TwitterClient: BDBOAuth1SessionManager {
         })
     }
     
+    func getUserTimeLine(userName name: String, count: Int, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        let params: [String : Any] = [
+            "screen_name" : name,
+            "count" : count
+        ]
+        get("1.1/statuses/user_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+            let dictionaries = response as! [NSDictionary]
+            let tweets = Tweet.getAllTweetsFrom(dictionaries: dictionaries)
+            success(tweets)
+        }) { (task: URLSessionDataTask?, error: Error) in
+            failure(error)
+        }
+    }
+    
     func getMentionsTimeline(tweetCount count: Int = 20, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
         let params = ["count" : count]
         get("1.1/statuses/mentions_timeline.json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
@@ -108,11 +122,51 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func unRetweet(tweetId id: Int64, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
-        post("1.1/statuses/unretweet/\(id).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+//    func unRetweet(tweetId id: Int64, success: @escaping (Tweet) -> (), failure: @escaping (Error) -> ()) {
+//        post("1.1/statuses/unretweet/\(id).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+//            let dictionary = response as! NSDictionary
+//            let unRetweetedTweet = Tweet(dictionary: dictionary)
+//            success(unRetweetedTweet)
+//        }) { (task: URLSessionDataTask?, error: Error) in
+//            failure(error)
+//        }
+//    }
+    
+    func unRetweet(tweet: Tweet, success: @escaping (Tweet?) -> (), failure: @escaping (Error) -> ()) {
+        var originalTweetId = ""
+        if !tweet.isRetweeted {
+            // Return, cannot unretweet a tweet which was never retweeted
+            success(nil)
+        } else {
+            if let retweetStatus = tweet.retweetDetails {
+                // Tweet was itself a retweet
+                originalTweetId = String(retweetStatus.id)
+            } else {
+                originalTweetId = String(tweet.id)
+            }
+        }
+        let params = ["include_my_retweet" : 1]
+        get("1.1/statuses/show/\(originalTweetId).json", parameters: params, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
             let dictionary = response as! NSDictionary
-            let unRetweetedTweet = Tweet(dictionary: dictionary)
-            success(unRetweetedTweet)
+            if let retweetNode = dictionary.object(forKey: "current_user_retweet") as? NSDictionary  {
+                if let retweetId = retweetNode.object(forKey: "id_str") as? String {
+                    
+                    self.post("1.1/statuses/destroy/\(retweetId).json", parameters: nil, progress: nil, success: { (task: URLSessionDataTask, response: Any?) in
+                        let dict = response as! NSDictionary
+                        let deletedRetweet = Tweet(dictionary: dict)
+                        success(deletedRetweet)
+                    }, failure: { (task: URLSessionDataTask?, error: Error) in
+                        failure(error)
+                    })
+                } else {
+                    success(nil)
+                }
+                
+            } else {
+                success(nil)
+            }
+            
+            
         }) { (task: URLSessionDataTask?, error: Error) in
             failure(error)
         }

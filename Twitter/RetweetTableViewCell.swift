@@ -53,12 +53,26 @@ class RetweetTableViewCell: UITableViewCell {
     }
     @IBAction func retweetClicked(_ sender: UIButton) {
         let id = tweet.id
-        client.retweet(tweetId: id, success: { (responseTweet: Tweet) in
-            let retweetDetails = responseTweet.retweetDetails!
-            self.delegate?.userDidRetweet?(tweet: retweetDetails)
-        }) { (error: Error) in
-            print("error: \(error.localizedDescription)")
+        if tweet.isRetweeted {
+            // Unretweet
+            client.unRetweet(tweet: tweet, success: { (unretweet: Tweet?) in
+                if let unretweeted = unretweet {
+                    self.delegate?.userDidRetweet?(tweet: unretweeted)
+                } else {
+                    print("Tweet was never retweeted")
+                }
+            }, failure: { (error: Error) in
+                print("Unretweet error: \(error.localizedDescription)")
+            })
+        } else {
+            client.retweet(tweetId: id, success: { (responseTweet: Tweet) in
+                let retweetDetails = responseTweet.retweetDetails!
+                self.delegate?.userDidRetweet?(tweet: retweetDetails)
+            }) { (error: Error) in
+                print("error: \(error.localizedDescription)")
+            }
         }
+        
     }
     @IBAction func favoriteClicked(_ sender: UIButton) {
         let id = tweet.id

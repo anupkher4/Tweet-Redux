@@ -224,7 +224,8 @@
                     </navigationItem>
                     <connections>
                         <outlet property="tweetsTableView" destination="H2u-Q2-y1B" id="jdR-JA-zez"/>
-                        <segue destination="5eT-GK-Db4" kind="presentation" identifier="tweetsToProfile" id="E8z-4c-8TZ"/>
+                        <segue destination="MUb-Tr-EfE" kind="presentation" identifier="tweetHomeToReply" id="KO8-uF-fYV"/>
+                        <segue destination="kYu-U4-IHM" kind="presentation" identifier="tweetsToProfile" id="L15-2T-QhV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="3SW-06-5f4" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1510,6 +1511,6 @@
         <image name="retweet" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="A4D-q0-SvI"/>
+        <segue reference="KO8-uF-fYV"/>
     </inferredMetricsTieBreakers>
 </document>

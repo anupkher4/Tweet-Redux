@@ -9,6 +9,13 @@
 import UIKit
 import AFNetworking
 
+@objc protocol TweetTableViewCellDelegate {
+    @objc optional func userTappedRetweet(cell: UITableViewCell)
+    @objc optional func userTappedFavorite(cell: UITableViewCell)
+    @objc optional func userTappedReply(cell: UITableViewCell)
+}
+
+
 class TweetTableViewCell: UITableViewCell {
     @IBOutlet weak var retweetStackView: UIStackView!
     @IBOutlet weak var retweetLabel: UILabel!
@@ -20,6 +27,8 @@ class TweetTableViewCell: UITableViewCell {
     @IBOutlet weak var replyButton: UIButton!
     @IBOutlet weak var retweetButton: UIButton!
     @IBOutlet weak var likeButton: UIButton!
+    
+    weak var delegate: TweetTableViewCellDelegate?
 
     var tweet: Tweet! {
         didSet {
@@ -74,12 +83,25 @@ class TweetTableViewCell: UITableViewCell {
     }
 
     @IBAction func replyClicked(_ sender: UIButton) {
+        delegate?.userTappedReply?(cell: self)
     }
     
     @IBAction func retweetClicked(_ sender: UIButton) {
+//        if retweetButton.imageView?.image == UIImage(named: "retweet_on") {
+//            retweetButton.setImage(UIImage(named: "retweet_off"), for: .normal)
+//        } else if retweetButton.imageView?.image == UIImage(named: "retweet_off") {
+//            retweetButton.setImage(UIImage(named: "retweet_on"), for: .normal)
+//        }
+        delegate?.userTappedRetweet?(cell: self)
     }
     
     @IBAction func likeClicked(_ sender: UIButton) {
+//        if likeButton.imageView?.image == UIImage(named: "favorite_on") {
+//            likeButton.setImage(UIImage(named: "favorite_off"), for: .normal)
+//        } else if likeButton.imageView?.image == UIImage(named: "favorite_off") {
+//            likeButton.setImage(UIImage(named: "favorite_on"), for: .normal)
+//        }
+        delegate?.userTappedFavorite?(cell: self)
     }
     
 }
