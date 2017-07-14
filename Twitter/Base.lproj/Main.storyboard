@@ -21,12 +21,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rp9-ln-ykP">
-                                <rect key="frame" x="82" y="503" width="210" height="70"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="See what's happening in the world right now." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HxB-Hq-wAh">
+                                <rect key="frame" x="40" y="312" width="295" height="43"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="twitter_blue" translatesAutoresizingMaskIntoConstraints="NO" id="Ggz-Iu-UPf">
+                                <rect key="frame" x="40" y="30" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="fKo-rf-xfI"/>
+                                    <constraint firstAttribute="height" constant="40" id="qHR-Wa-mEg"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rp9-ln-ykP">
+                                <rect key="frame" x="40" y="375" width="295" height="35"/>
                                 <color key="backgroundColor" red="0.11372549019607843" green="0.63137254901960782" blue="0.94901960784313721" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="20"/>
-                                <state key="normal" title="Login with Twitter">
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="NhK-DR-VI7"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                <state key="normal" title="Get Started">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
@@ -35,8 +50,20 @@
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Ggz-Iu-UPf" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="40" id="4UW-g9-hcp"/>
+                            <constraint firstItem="Ggz-Iu-UPf" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="EBz-aI-48t"/>
+                            <constraint firstItem="rp9-ln-ykP" firstAttribute="top" secondItem="HxB-Hq-wAh" secondAttribute="bottom" constant="20" id="GYk-Jw-oL5"/>
+                            <constraint firstItem="HxB-Hq-wAh" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="MCl-BW-W5R"/>
+                            <constraint firstItem="rp9-ln-ykP" firstAttribute="trailing" secondItem="HxB-Hq-wAh" secondAttribute="trailing" id="cHc-oZ-aDU"/>
+                            <constraint firstItem="rp9-ln-ykP" firstAttribute="leading" secondItem="HxB-Hq-wAh" secondAttribute="leading" id="g1x-RR-Ggl"/>
+                            <constraint firstItem="HxB-Hq-wAh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="sPT-nG-5eS"/>
+                            <constraint firstItem="HxB-Hq-wAh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="40" id="sp1-f0-HRz"/>
+                            <constraint firstAttribute="trailing" secondItem="HxB-Hq-wAh" secondAttribute="trailing" constant="40" id="xjJ-JO-Vn8"/>
+                        </constraints>
                     </view>
                     <connections>
+                        <outlet property="loginButton" destination="rp9-ln-ykP" id="4u0-wo-LDC"/>
                         <segue destination="Rw0-rA-iF7" kind="presentation" identifier="loginToHome" id="9la-aO-7Wq"/>
                     </connections>
                 </viewController>
@@ -1509,6 +1536,7 @@
         <image name="favorite" width="30" height="30"/>
         <image name="reply" width="30" height="30"/>
         <image name="retweet" width="30" height="30"/>
+        <image name="twitter_blue" width="400" height="400"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="KO8-uF-fYV"/>
