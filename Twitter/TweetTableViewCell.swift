@@ -7,11 +7,10 @@
 //
 
 import UIKit
-import AFNetworking
 
 @objc protocol TweetTableViewCellDelegate {
-    @objc optional func userTappedRetweet(cell: UITableViewCell)
-    @objc optional func userTappedFavorite(cell: UITableViewCell)
+    @objc optional func userTappedRetweet(cell: UITableViewCell, currentState: Bool)
+    @objc optional func userTappedFavorite(cell: UITableViewCell, currentState: Bool)
     @objc optional func userTappedReply(cell: UITableViewCell)
 }
 
@@ -87,21 +86,43 @@ class TweetTableViewCell: UITableViewCell {
     }
     
     @IBAction func retweetClicked(_ sender: UIButton) {
-//        if retweetButton.imageView?.image == UIImage(named: "retweet_on") {
-//            retweetButton.setImage(UIImage(named: "retweet_off"), for: .normal)
-//        } else if retweetButton.imageView?.image == UIImage(named: "retweet_off") {
-//            retweetButton.setImage(UIImage(named: "retweet_on"), for: .normal)
-//        }
-        delegate?.userTappedRetweet?(cell: self)
+        let state = toggleRetweetImage()
+        delegate?.userTappedRetweet?(cell: self, currentState: state)
     }
     
     @IBAction func likeClicked(_ sender: UIButton) {
-//        if likeButton.imageView?.image == UIImage(named: "favorite_on") {
-//            likeButton.setImage(UIImage(named: "favorite_off"), for: .normal)
-//        } else if likeButton.imageView?.image == UIImage(named: "favorite_off") {
-//            likeButton.setImage(UIImage(named: "favorite_on"), for: .normal)
-//        }
-        delegate?.userTappedFavorite?(cell: self)
+        let state = toggleFavoriteImage()
+        delegate?.userTappedFavorite?(cell: self, currentState: state)
+    }
+    
+    //MARK: - Helper functions
+    
+    private func toggleRetweetImage() -> Bool {
+        var state = false
+        
+        if retweetButton.image(for: .normal) == UIImage(named: "retweet_on") {
+            retweetButton.setImage(UIImage(named: "retweet"), for: .normal)
+            state = false
+        } else {
+            retweetButton.setImage(UIImage(named: "retweet_on"), for: .normal)
+            state = true
+        }
+        
+        return state
+    }
+    
+    private func toggleFavoriteImage() -> Bool {
+        var state = false
+        
+        if likeButton.image(for: .normal) == UIImage(named: "favorite_on") {
+            likeButton.setImage(UIImage(named: "favorite"), for: .normal)
+            state = false
+        } else {
+            likeButton.setImage(UIImage(named: "favorite_on"), for: .normal)
+            state = true
+        }
+        
+        return state
     }
     
 }

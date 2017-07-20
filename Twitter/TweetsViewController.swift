@@ -8,11 +8,13 @@
 
 import UIKit
 
-class TweetsViewController: UIViewController, TweetTableViewCellDelegate {
+class TweetsViewController: UIViewController {
     @IBOutlet weak var tweetsTableView: UITableView!
     
     let client = TwitterClient.sharedInstance!
     var tweets: [Tweet] = []
+    var retweetState: [Int : Bool] = [:]
+    var favoriteState: [Int : Bool] = [:]
     var firstLoad = true
     var isMoreDataLoading = false
     var activityIndicator: UIActivityIndicatorView?
@@ -105,63 +107,6 @@ class TweetsViewController: UIViewController, TweetTableViewCellDelegate {
         getTweets(refreshControl: refreshControl)
     }
     
-    // MARK: - TweetTableViewCellDelegate methods
-    
-    func userTappedReply(cell: UITableViewCell) {
-        let indexPath = tweetsTableView.indexPath(for: cell)
-        let tweet = tweets[indexPath!.row]
-        performSegue(withIdentifier: "tweetHomeToReply", sender: tweet)
-    }
-    
-    func userTappedRetweet(cell: UITableViewCell) {
-        let indexPath = tweetsTableView.indexPath(for: cell)
-        let tweet = tweets[indexPath!.row]
-        if tweet.isRetweeted {
-            // Unretweet
-            client.unRetweet(tweet: tweet, success: { (unretweet: Tweet?) in
-                if let tweet = unretweet {
-                    print("Unretweeted \(tweet.id)")
-                    self.tweetsTableView.reloadData()
-                } else {
-                    print("Tweet was never retweeted")
-                }
-            }, failure: { (error: Error) in
-                print("Unretweet error: \(error.localizedDescription)")
-            })
-        } else {
-            client.retweet(tweetId: tweet.id, success: { (retweet: Tweet) in
-                print("Retweeted \(retweet.id)")
-                self.tweetsTableView.reloadData()
-            }, failure: { (error: Error) in
-                print("Retweet error: \(error.localizedDescription)")
-            })
-        }
-//        tweetsTableView.reloadData()
-        tweet.isRetweeted = !tweet.isRetweeted
-    }
-    
-    func userTappedFavorite(cell: UITableViewCell) {
-        let indexPath = tweetsTableView.indexPath(for: cell)
-        let tweet = tweets[indexPath!.row]
-        if tweet.isFavorited {
-            // Unlike
-            client.unFavorite(tweetId: tweet.id, success: { (unliked: Tweet) in
-                print("Unliked \(unliked.id)")
-                self.tweetsTableView.reloadData()
-            }, failure: { (error: Error) in
-                print("Unlike error: \(error.localizedDescription)")
-            })
-        } else {
-            client.favorite(tweetId: tweet.id, success: { (liked: Tweet) in
-                print("Liked \(liked.id)")
-                self.tweetsTableView.reloadData()
-            }, failure: { (error: Error) in
-                print("Like error: \(error.localizedDescription)")
-            })
-        }
-//        tweetsTableView.reloadData()
-        tweet.isFavorited = !tweet.isFavorited
-    }
 
     // MARK: - Navigation
 
@@ -201,6 +146,21 @@ extension TweetsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "TweetCell", for: indexPath) as! TweetTableViewCell
         cell.delegate = self
+        
+        // Maintain cell state
+        // Retweet
+        if retweetState[indexPath.row] == false || retweetState[indexPath.row] == nil {
+            cell.retweetButton.setImage(UIImage(named: "retweet"), for: .normal)
+        } else {
+            cell.retweetButton.setImage(UIImage(named: "retweet_on"), for: .normal)
+        }
+        // Favorite
+        if favoriteState[indexPath.row] == false || favoriteState[indexPath.row] == nil {
+            cell.likeButton.setImage(UIImage(named: "favorite"), for: .normal)
+        } else {
+            cell.likeButton.setImage(UIImage(named: "favorite_on"), for: .normal)
+        }
+        
         let tweet = tweets[indexPath.row]
         cell.tweet = tweet
         
@@ -233,6 +193,94 @@ extension TweetsViewController: UIScrollViewDelegate {
                 loadMoreTweets()
             }
         }
+    }
+    
+}
+
+// MARK: - TweetTableViewCellDelegate methods
+
+extension TweetsViewController: TweetTableViewCellDelegate {
+    
+    func userTappedReply(cell: UITableViewCell) {
+        let indexPath = tweetsTableView.indexPath(for: cell)
+        let tweet = tweets[indexPath!.row]
+        performSegue(withIdentifier: "tweetHomeToReply", sender: tweet)
+    }
+    
+    func userTappedRetweet(cell: UITableViewCell, currentState: Bool) {
+        guard let indexPath = tweetsTableView.indexPath(for: cell) else {
+            print("Could not get indexPath for retweet cell")
+            return
+        }
+        let index = indexPath.row
+        let tweet = tweets[index]
+        
+        // Maintain cell state
+        if !currentState {
+            if retweetState[index] != nil {
+                retweetState[index] = currentState
+            }
+        } else {
+            retweetState[index] = currentState
+        }
+        
+        if tweet.isRetweeted {
+            // Unretweet
+            client.unRetweet(tweet: tweet, success: { (unretweet: Tweet?) in
+                if let tweet = unretweet {
+                    print("Unretweeted \(tweet.id)")
+                    self.tweetsTableView.reloadData()
+                } else {
+                    print("Tweet was never retweeted")
+                }
+            }, failure: { (error: Error) in
+                print("Unretweet error: \(error.localizedDescription)")
+            })
+        } else {
+            client.retweet(tweetId: tweet.id, success: { (retweet: Tweet) in
+                print("Retweeted \(retweet.id)")
+                self.tweetsTableView.reloadData()
+            }, failure: { (error: Error) in
+                print("Retweet error: \(error.localizedDescription)")
+            })
+        }
+
+    }
+    
+    func userTappedFavorite(cell: UITableViewCell, currentState: Bool) {
+        guard let indexPath = tweetsTableView.indexPath(for: cell) else {
+            print("Could not get indexPath for favorite cell")
+            return
+        }
+        let index = indexPath.row
+        let tweet = tweets[index]
+        
+        // Maintain cell state
+        if !currentState {
+            if favoriteState[index] != nil {
+                favoriteState[index] = false
+            }
+        } else {
+            favoriteState[index] = currentState
+        }
+        
+        if tweet.isFavorited {
+            // Unlike
+            client.unFavorite(tweetId: tweet.id, success: { (unliked: Tweet) in
+                print("Unliked \(unliked.id)")
+                self.tweetsTableView.reloadData()
+            }, failure: { (error: Error) in
+                print("Unlike error: \(error.localizedDescription)")
+            })
+        } else {
+            client.favorite(tweetId: tweet.id, success: { (liked: Tweet) in
+                print("Liked \(liked.id)")
+                self.tweetsTableView.reloadData()
+            }, failure: { (error: Error) in
+                print("Like error: \(error.localizedDescription)")
+            })
+        }
+        
     }
     
 }
